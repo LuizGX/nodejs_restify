@@ -1,11 +1,17 @@
-import * as mongoose from 'mongoose';
-import { validateCPF } from '../common/validators';
+import * as mongoose from 'mongoose'
+import { validateCPF } from '../common/validators'
+import * as bcrypt from 'bcrypt'
+import { environment } from '../common/environment'
 
 export interface User extends mongoose.Document {
     name: string,
     email: string,
     password: string
-};
+}
+
+export interface UserModel extends mongoose.Model<User> {
+    findByEmail(email: string): Promise<User>
+}
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -40,4 +46,8 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-export const User = mongoose.model<User>('User', userSchema)
+userSchema.statics.findByEmail = function (email: string) {
+    return this.findOne({ email }) //{email: email}
+}
+
+export const User = mongoose.model<User, UserModel>('User', userSchema)
