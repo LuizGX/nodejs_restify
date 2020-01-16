@@ -26,6 +26,14 @@ test('get /users', () => {
         }).catch(fail)
 })
 
+test('get /users/aaaa - not found', () => {
+    return request(address)
+        .get('/users/aaaa')
+        .then(response => {
+            expect(response.status).toBe(404)
+        }).catch(fail)
+})
+
 test('post /users', () => {
     return request(address)
         .post('/users')
@@ -43,6 +51,29 @@ test('post /users', () => {
             expect(response.body.cpf).toBe('962.116.531-82')
             expect(response.body.password).toBeUndefined()
         }).catch(fail)
+})
+
+test('patch /users/:id', () => {
+    return request(address)
+        .post('/users')
+        .send({
+            name: 'usuario2',
+            email: 'usuario2@email.com',
+            password: '123456'
+        })
+        .then(response => request(address)
+            .patch(`/users/${response.body._id}`)
+            .send({
+                name: 'usuario2 - patch'
+            }))
+        .then(response => {
+            expect(response.status).toBe(200)
+            expect(response.body._id).toBeDefined()
+            expect(response.body.name).toBe('usuario2 - patch')
+            expect(response.body.email).toBe('usuario2@email.com')
+            expect(response.body.password).toBeUndefined()
+        })
+        .catch(fail)
 })
 
 afterAll(() => {
