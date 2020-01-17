@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "jest": {
+    "verbose": true,
+    "globals": {
+      "address": "http://localhost:3001"
+    },
     "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
